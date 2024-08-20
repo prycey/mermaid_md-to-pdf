@@ -60,7 +60,13 @@ export async function generateOutput(
 		}
 
 		if (!browserPromise) {
-			browserPromise = puppeteer.launch({ devtools: config.devtools, ...config.launch_options });
+			browserPromise = puppeteer.launch({
+				devtools: config.devtools,
+				headless: false,
+				...config.launch_options,
+				  channel: 'chrome',
+				args: ['--disable-web-security'],
+			});
 		}
 
 		return browserPromise;
@@ -74,8 +80,9 @@ export async function generateOutput(
 
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	await page.goto(`http://localhost:${config.port!}/${urlPathname}`); // make sure relative paths work as expected
-	await page.setContent(html); // overwrite the page content with what was generated from the markdown
-
+	await page.setContent(html, { waitUntil: ['load', 'networkidle0'] }); // overwrite the page content with what was generated from the markdown
+	console.log(html);
+	console.log(page.content);
 	for (const stylesheet of config.stylesheet) {
 		await page.addStyleTag(isHttpUrl(stylesheet) ? { url: stylesheet } : { path: stylesheet });
 	}
@@ -110,7 +117,7 @@ export async function generateOutput(
 		outputFileContent = await page.pdf(config.pdf_options);
 	}
 
-	await page.close();
+	//await page.close();
 
 	return config.devtools ? (undefined as any) : { filename: config.dest, content: outputFileContent };
 }

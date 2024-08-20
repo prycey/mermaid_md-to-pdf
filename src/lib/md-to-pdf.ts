@@ -30,8 +30,11 @@ export const convertMdToPdf = async (
 			? input.content
 			: await readFile(input.path, args['--md-file-encoding'] ?? config.md_file_encoding);
 
+	// Preprocess Mermaid diagrams
+	const preprocessedContent = preprocessMermaid(mdFileContent);
+	console.log(preprocessMermaid);
 	const { content: md, data: frontMatterConfig } = grayMatter(
-		mdFileContent,
+		preprocessedContent,
 		args['--gray-matter-options'] ? JSON.parse(args['--gray-matter-options']) : config.gray_matter_options,
 	);
 
@@ -92,6 +95,7 @@ export const convertMdToPdf = async (
 
 	const html = getHtml(md, config);
 
+	console.log(html);
 	const relativePath = 'path' in input ? relative(config.basedir, input.path) : '.';
 
 	const output = await generateOutput(html, relativePath, config, browser);
@@ -114,3 +118,14 @@ export const convertMdToPdf = async (
 
 	return output;
 };
+
+/**
+ * Preprocess Mermaid diagrams in the markdown content.
+ */
+function preprocessMermaid(content: string): string {
+	// Replace mermaid code blocks within <p> tags
+	content = content.replace(/<p>mermaid([\s\S]*?)<\/p>/g, (_, p1) => {
+		return `<div class="mermaid">${p1.trim()}</div>`;
+	});
+	return content;
+}

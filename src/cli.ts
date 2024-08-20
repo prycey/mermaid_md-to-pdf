@@ -127,8 +127,8 @@ async function main(args: typeof cliFlags, config: Config) {
 	if (stdin) {
 		await convertMdToPdf({ content: stdin }, config, { args })
 			.finally(async () => {
-				await closeBrowser();
-				await closeServer(server);
+				//await closeBrowser();
+				//await closeServer(server);
 			})
 			.catch((error: Error) => {
 				throw error;

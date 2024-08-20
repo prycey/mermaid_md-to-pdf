@@ -18,6 +18,29 @@ pdf_options:
 
 ![Markdown Mark](markdown-mark.svg)
 
+# Test Mermaid Diagram
+
+mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>John: Hello John, how are you?
+    loop HealthCheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts <br/>prevail!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+
+mermaid
+graph TD
+    A[Start] --> B{Is it?}
+    B -->|Yes| C[Do something]
+    B -->|No| D[Do something else]
+    C --> E[End]
+    D --> E[End]
+
 ## 2. Typography
 
 ### 2.1. Paragraph
